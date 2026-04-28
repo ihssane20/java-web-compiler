@@ -8,11 +8,19 @@ import tools.jackson.databind.ObjectMapper;
 import javax.tools.ToolProvider;
 
 public class Application {
-    private record CompileRequest(String code){
-        private CompileRequest {
-            Objects.requireNonNull(code);
-        }
-    }
+  private record CompileRequest(String code){
+      private CompileRequest {
+          Objects.requireNonNull(code);
+      }
+  }
+
+  private static final Pattern CLASSNAME_PATTERN = Pattern.compile("class\\s+(\\w+)");
+
+  // Dynamic class name extraction
+  private static String classNameExtractor(String code){
+    var m = CLASSNAME_PATTERN.matcher(code);
+    return m.find() ? m.group(1) : "Main";
+  }
 
   static void main(String[] args) {
     var app = JExpress.express();
@@ -27,7 +35,9 @@ public class Application {
         var body = req.bodyText();
         var compileRequest = objectMapper.readValue(body, CompileRequest.class);
         var sourceCode = compileRequest.code;
-        var diagnostics = Compiler.compileInMemory("Main", sourceCode);
+
+        var className = classNameExtractor(sourceCode);
+        var diagnostics = Compiler.compileInMemory(className, sourceCode);
         res.send(objectMapper.writeValueAsString(diagnostics));
       } catch (Exception e) {
         res.status(500).json("""
