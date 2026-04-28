@@ -35,4 +35,43 @@ public final class ApplicationTest {
     assertNotNull(first.message());
     assertFalse(first.message().isEmpty());
   }
+
+    @Test
+    public void compileWithDifferentClassName() {
+        var code = """
+      public class Test {
+        public static void main(String[] args) {
+        }
+      }
+      """;
+
+        var diagnostics = Compiler.compileInMemory("Test", code);
+
+        assertTrue(diagnostics.isEmpty());
+    }
+
+    @Test
+    public void compileWithWrongClassNameShouldFail() {
+        var code = """
+      public class Test {
+      }
+      """;
+
+        var diagnostics = Compiler.compileInMemory("Main", code);
+
+        assertFalse(diagnostics.isEmpty());
+    }
+
+    @Test
+    public void compileClassWithoutMainShouldStillCompile() {
+        var code = """
+        public class Test {
+            int x = 10;
+        }
+        """;
+
+        var diagnostics = Compiler.compileInMemory("Test", code);
+
+        assertTrue(diagnostics.isEmpty());
+    }
 }
