@@ -24,6 +24,9 @@ public class Compiler {
 
   private static CompilerResult compileTask (String className, String sourceCode, MemoryClassLoader loader){
     var compiler = ToolProvider.getSystemJavaCompiler();
+    if(compiler == null){
+      throw new IllegalStateException("Compiler not available");
+    }
     var diagnostics = new DiagnosticCollector<>();
     var fileManager = new MemoryFileManager(compiler.getStandardFileManager(null, null, null), loader);
 
