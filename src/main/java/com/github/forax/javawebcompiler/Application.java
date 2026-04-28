@@ -9,7 +9,6 @@ public class Application {
 
   private static final Pattern CLASSNAME_PATTERN = Pattern.compile("class\\s+(\\w+)");
 
-  // Dynamic class name extraction
   private static String classNameExtractor(String code) {
     var m = CLASSNAME_PATTERN.matcher(code);
     return m.find() ? m.group(1) : "Main";
@@ -18,7 +17,6 @@ public class Application {
   static void main(String[] args) {
     var app = JExpress.express();
 
-    // Serve the static frontend files from "public"
     app.use(JExpress.staticFiles(Path.of("public")));
     var objectMapper = new ObjectMapper();
 
@@ -54,10 +52,10 @@ public class Application {
         res.send(objectMapper.writeValueAsString(Map.of("output", output)));
       } catch (Exception e) {
         res.status(500).json("""
-          {"error": "Internal Server Error"}
+            {"error": "Internal Server Error"}
         """);
-        }
-      });
+      }
+    });
     app.listen(8080);
     System.out.println("Web site on http://localhost:8080/index.html");
   }
