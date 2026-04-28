@@ -35,4 +35,17 @@ public final class ApplicationTest {
     assertNotNull(first.message());
     assertFalse(first.message().isEmpty());
   }
+  @Test
+  public void warningOnlyCodeIsSuccess(){
+    var source = """
+        import java.util.ArrayList;
+        public class Main {
+            public static void main(String[] args) {
+                ArrayList list = new ArrayList();
+            }
+        }
+        """;
+    var diagnostic = Compiler.compileInMemory("Main", source);
+    assertTrue(diagnostic.isEmpty());
+  }
 }
