@@ -19,7 +19,7 @@ public final class ApplicationTest {
   }
 
   @Test
-  void diagnosticContainsLineAndColumn() {
+ public void diagnosticContainsLineAndColumn() {
     var source = """
         public class Main {
             public static void main(String[] args) {
