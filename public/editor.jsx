@@ -4,6 +4,7 @@ function JavaEditor() {
   const editorDivRef = useRef(null);
   const editorInstanceRef = useRef(null);
   const monacoRef = useRef(null);
+  const [output, setOutput] = useState(null);
 
   const defaultCode = 'public class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello World");\n  }\n}';
 
@@ -49,6 +50,18 @@ function JavaEditor() {
      return response.json();
    }
 
+ async function runCode() {
+   try {
+     const code = editorInstanceRef.current.getValue();
+     const response = await fetch('/run', { method: 'POST' });
+     if (!response.ok) throw new Error(response.statusText);
+     const data = await response.json();
+     setOutput(data.output);
+   } catch (err) {
+     console.error('Run failed:', err);
+   }
+ }
+
   async function compileCode() {
     if (!editorInstanceRef.current || !monacoRef.current) return;
 
@@ -91,9 +104,19 @@ function JavaEditor() {
           style={{ padding: '8px 16px', fontSize: '14px', cursor: 'pointer', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px' }}>
           Compile Code
         </button>
+        <button onClick={runCode}
+          style={{ padding: '8px 16px', fontSize: '14px', cursor: 'pointer', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px' }}>
+          Run
+        </button>
       </div>
       {/* The div where Monaco will inject itself */}
       <div ref={editorDivRef} style={{ flexGrow: 1 }} />
+      <div style={{ height: '150px', backgroundColor: '#1e1e1e', borderTop: '2px solid #4CAF50', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '4px 10px', backgroundColor: '#2d2d2d', color: '#888', fontSize: '12px' }}>Output</div>
+        <pre style={{ margin: 0, padding: '10px', color: '#d4d4d4', fontFamily: 'monospace', overflowY: 'auto', flexGrow: 1 }}>
+          {output ?? 'Run your code to see output here...'}
+        </pre>
+      </div>
     </div>
   );
 }
