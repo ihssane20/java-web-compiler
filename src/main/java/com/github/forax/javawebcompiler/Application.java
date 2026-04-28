@@ -9,7 +9,7 @@ import javax.tools.ToolProvider;
 
 public class Application {
 
-  private record Diagnostic(long line, long column, String message) {}
+  record Diagnostic(long line, long column, String message) {} 
   private record CompilerResult(boolean success, DiagnosticCollector<Object> diagnostics) {}
 
   static void main(String[] args) {
