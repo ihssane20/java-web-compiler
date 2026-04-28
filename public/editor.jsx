@@ -5,6 +5,7 @@ function JavaEditor() {
   const editorInstanceRef = useRef(null);
   const monacoRef = useRef(null);
   const [output, setOutput] = useState(null);
+  const [className, setClassName] = useState('Main');
 
   const defaultCode = 'public class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello World");\n  }\n}';
 
@@ -70,7 +71,9 @@ function JavaEditor() {
     const model = editorInstanceRef.current.getModel();
 
     try {
-      const errors = await fetchResponse(currentCode);
+      const data = await fetchResponse(currentCode);
+      const errors = data.diagnostics;
+      setClassName(data.className);
 
       if (errors.length === 0) {
         alert("Compilation successful!");
@@ -105,7 +108,7 @@ function JavaEditor() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'Main.java';
+    a.download = `${className}.java`;
     a.click();
     URL.revokeObjectURL(url);
   }
