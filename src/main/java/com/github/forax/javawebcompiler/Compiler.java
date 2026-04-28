@@ -8,6 +8,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Compiler {
   private Compiler(){
@@ -15,6 +16,11 @@ public class Compiler {
   }
   record Diagnostic(long line, long column, String message) {}
   private record CompilerResult(boolean success, DiagnosticCollector<Object> diagnostics, MemoryClassLoader loader) {}
+  record CompileRequest(String code){
+    CompileRequest {
+      Objects.requireNonNull(code);
+    }
+  }
 
   // Package private for testing
   static List<Diagnostic> compileInMemory(String className, String sourceCode, MemoryClassLoader loader) {

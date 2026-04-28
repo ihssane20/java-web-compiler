@@ -6,11 +6,6 @@ import module java.compiler;
 import tools.jackson.databind.ObjectMapper;
 
 public class Application {
-  private record CompileRequest(String code){
-    private CompileRequest {
-      Objects.requireNonNull(code);
-    }
-  }
 
   private static final Pattern CLASSNAME_PATTERN = Pattern.compile("class\\s+(\\w+)");
 
@@ -30,7 +25,7 @@ public class Application {
     app.post("/compile", (req, res) -> {
       try {
         var body = req.bodyText();
-        var compileRequest = objectMapper.readValue(body, CompileRequest.class);
+        var compileRequest = objectMapper.readValue(body, Compiler.CompileRequest.class);
         var sourceCode = compileRequest.code();
         var className = classNameExtractor(sourceCode);
         var newLoader = new MemoryClassLoader();
@@ -47,7 +42,7 @@ public class Application {
     app.post("/run", (req, res) -> {
       try {
         var body = req.bodyText();
-        var compileRequest = objectMapper.readValue(body, CompileRequest.class);
+        var compileRequest = objectMapper.readValue(body, Compiler.CompileRequest.class);
         var sourceCode = compileRequest.code();
         var className = classNameExtractor(sourceCode);
         var newLoader = new MemoryClassLoader();
