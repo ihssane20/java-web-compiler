@@ -14,20 +14,20 @@ public final class ApplicationTest {
         }
       }
       """;
-    var result = Compiler.compileInMemory("Main", code);
+    var result = Compiler.compileInMemory("Main", code, new MemoryClassLoader());
     assertTrue(result.isEmpty());
   }
 
   @Test
- public void diagnosticContainsLineAndColumn() {
+  public void diagnosticContainsLineAndColumn() {
     var source = """
-        public class Main {
-            public static void main(String[] args) {
-                int x = "ksdjfj";
-            }
+      public class Main {
+        public static void main(String[] args) {
+          int x = "ksdjfj";
         }
-        """;
-    var diagnostics = Compiler.compileInMemory("Main", source);
+      }
+    """;
+    var diagnostics = Compiler.compileInMemory("Main", source, new MemoryClassLoader());
     assertFalse(diagnostics.isEmpty());
     var first = diagnostics.getFirst();
     assertTrue(first.line() > 0);
